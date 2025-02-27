@@ -1,28 +1,31 @@
-name: CI
+name: Deploy LaTeX to HTML Website
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      - name: Install TeX Live and Missing Packages
+      - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive texlive-latex-extra texlive-fonts-extra texlive-fonts-recommended texlive-xetex texlive-lang-all
-          tlmgr install fontawesome5
+          sudo apt-get install -y pandoc texlive-latex-base texlive-fonts-recommended texlive-latex-extra
 
-      - name: Run make4ht
-        uses: docker://ghcr.io/michal-h21/make4ht-action:latest
-        env:
-          command: 'make4ht -c config.cfg -ua debug -d out main.tex "fn-in"'
+      - name: Convert LaTeX to HTML
+        run: pandoc main.tex -s -o index.html
 
-      - name: Publish the Web Pages
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./out
+          publish_dir: ./
+
 
