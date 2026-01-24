@@ -11,6 +11,6 @@ repos:
         args: ["--maxkb=500"]
 
   - repo: https://github.com/kynan/nbstripout
-    rev: 0.8.2
+    rev: 0.9.0
     hooks:
       - id: nbstripout
